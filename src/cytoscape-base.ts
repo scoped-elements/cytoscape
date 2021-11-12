@@ -1,4 +1,4 @@
-import { css, html, LitElement } from 'lit';
+import { css, html, LitElement, PropertyValues } from 'lit';
 import { property, query } from 'lit/decorators.js';
 import cytoscape, {
   Core,
@@ -7,6 +7,8 @@ import cytoscape, {
   LayoutOptions,
   NodeDefinition,
 } from 'cytoscape';
+import mergeWith from 'lodash-es/mergeWith';
+import isString from 'lodash-es/isString';
 
 export abstract class CytoscapeBase extends LitElement {
   @property({ attribute: true })
@@ -28,6 +30,12 @@ export abstract class CytoscapeBase extends LitElement {
     this._elements = allElements;
   }
 
+  @property()
+  selectedNodesIds: Array<string> = [];
+
+  @property()
+  selectedColor: string = 'yellow';
+
   cy!: Core;
 
   _elements: Array<NodeDefinition | EdgeDefinition> = [];
@@ -36,15 +44,24 @@ export abstract class CytoscapeBase extends LitElement {
   _graphElement!: HTMLElement;
 
   firstUpdated() {
-    this.cy = cytoscape({
-      container: this._graphElement,
-      elements: this._elements,
-      layout: this.layout(),
-      autoungrabify: this.fixed,
-      userPanningEnabled: !this.fixed,
-      userZoomingEnabled: !this.fixed,
-      ...this.options,
-    });
+    const options = mergeWith(
+      {
+        container: this._graphElement,
+        elements: this._elements,
+        layout: this.layout(),
+        autoungrabify: this.fixed,
+        style: `
+        .selected {
+          background-color: ${this.selectedColor};
+        }`,
+      },
+      this.options,
+      (objV, srcV) => {
+        if (isString(objV)) return objV.concat(srcV);
+      }
+    );
+
+    this.cy = cytoscape(options);
     new ResizeObserver(() => {
       setTimeout(() => {
         this.cy.resize();
@@ -63,11 +80,30 @@ export abstract class CytoscapeBase extends LitElement {
     });
 
     this.cy.ready(() => {
-      this.cy.fit();
-      this.cy.center();
-      this.cy.resize();
-      this.cy.layout(this.layout()).run();
+      setTimeout(() => {
+        this.cy.fit();
+        this.cy.center();
+        this.cy.resize();
+        this.cy.layout(this.layout()).run();
+      });
     });
+  }
+
+  updated(changedValues: PropertyValues) {
+    super.updated(changedValues);
+
+    if (changedValues.has('selectedNodesIds')) {
+      this.cy.filter('node').removeClass('selected');
+
+      const nodeElements = this.cy.nodes();
+
+      for (const nodeElement of nodeElements.toArray()) {
+        const nodeId = nodeElement.id();
+        if (this.selectedNodesIds.includes(nodeId)) {
+          nodeElement.addClass('selected');
+        }
+      }
+    }
   }
 
   render() {
