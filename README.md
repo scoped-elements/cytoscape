@@ -27,7 +27,7 @@ export class CustomElement extends ScopedElementsMixin(LitElement) {
     return html`
       <cytoscape-dagre
         style="width: 100px; height: 100px;"
-        .nodes=${[
+        .elements=${[
           {
             // node a
             data: { id: 'a' },
@@ -36,8 +36,6 @@ export class CustomElement extends ScopedElementsMixin(LitElement) {
             // node b
             data: { id: 'b' },
           },
-        ]}
-        .edges=${[
           {
             // edge ab
             data: { id: 'ab', source: 'a', target: 'b' },
