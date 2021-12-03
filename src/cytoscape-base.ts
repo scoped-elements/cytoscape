@@ -7,23 +7,35 @@ import cytoscape, {
   LayoutOptions,
   NodeDefinition,
 } from 'cytoscape';
-import mergeWith from 'lodash-es/mergeWith';
-import isString from 'lodash-es/isString';
+import merge from 'lodash-es/merge';
 
 export abstract class CytoscapeBase extends LitElement {
-  @property({ attribute: true })
-  fixed = false;
-
   @property()
   options: CytoscapeOptions = {};
 
   @property()
   set elements(allElements: Array<NodeDefinition | EdgeDefinition>) {
     if (this.cy) {
-      this.cy.remove('node');
-      this.cy.add(allElements);
+      const collection = this.cy.elements();
 
-      if (this.fixed) {
+      const toRemove = collection.filter(
+        ele => !allElements.find(newEl => newEl.data.id === ele.data().id)
+      );
+      const toAdd = allElements.filter(
+        el => collection.getElementById(el.data.id as string).length === 0
+      );
+
+      this.cy.remove(toRemove);
+      this.cy.add(toAdd);
+
+      if (toAdd.length > 0 || toRemove.length > 0) {
+        this.cy.fit();
+        this.cy.layout(this.layout()).run();
+      }
+      if (!this._elements || this._elements.length === 0) {
+        this.cy.fit();
+        this.cy.center();
+        this.cy.resize();
         this.cy.layout(this.layout()).run();
       }
     }
@@ -33,43 +45,39 @@ export abstract class CytoscapeBase extends LitElement {
   @property()
   selectedNodesIds: Array<string> = [];
 
-  @property()
-  selectedColor: string = 'yellow';
-
   cy!: Core;
 
-  _elements: Array<NodeDefinition | EdgeDefinition> = [];
+  _elements: Array<NodeDefinition | EdgeDefinition> | undefined;
 
   @query('#graph')
   _graphElement!: HTMLElement;
 
   firstUpdated() {
-    const options = mergeWith(
+    const options = merge(
       {
         container: this._graphElement,
-        elements: this._elements,
+        elements: this._elements ? this._elements : [],
         layout: this.layout(),
-        autoungrabify: this.fixed,
-        style: `
-        .selected {
-          background-color: ${this.selectedColor};
-        }`,
       },
-      this.options,
-      (objV, srcV) => {
-        if (isString(objV)) return objV.concat(srcV);
-      }
+      this.options
     );
 
     this.cy = cytoscape(options);
     new ResizeObserver(() => {
       setTimeout(() => {
+        this.cy.fit();
         this.cy.resize();
+
         this.requestUpdate();
       });
     }).observe(this);
 
+    window.addEventListener('scroll', () => {
+      this.cy.resize();
+    });
+
     this.cy.on('tap', 'node', event => {
+      this.selectedNodesIds.push(event.target.id());
       this.dispatchEvent(
         new CustomEvent('node-selected', {
           bubbles: true,
@@ -79,14 +87,32 @@ export abstract class CytoscapeBase extends LitElement {
       );
     });
 
+    let rendered = false;
+    this.cy.on('render', () => {
+      if (this.cy.width() !== 0) {
+        if (!rendered) {
+          rendered = true;
+          // This is needed to render the nodes after the graph itself
+          // has resized properly so it computes the positions appriopriately
+          setTimeout(() => {
+            this.cy.fit();
+            this.cy.center();
+
+            this.cy.resize();
+            this.cy.layout(this.layout()).run();
+          });
+        }
+      }
+    });
+    /* 
     this.cy.ready(() => {
       setTimeout(() => {
         this.cy.fit();
         this.cy.center();
         this.cy.resize();
         this.cy.layout(this.layout()).run();
-      });
-    });
+      }, 10);
+    }); */
   }
 
   updated(changedValues: PropertyValues) {
