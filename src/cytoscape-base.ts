@@ -29,8 +29,12 @@ export abstract class CytoscapeBase extends LitElement {
       this.cy.add(toAdd);
 
       if (toAdd.length > 0 || toRemove.length > 0) {
-        this.cy.fit();
         this.cy.layout(this.layout()).run();
+        setTimeout(() => {
+          this.cy.fit();
+          this.cy.resize();
+          this.requestUpdate();
+        }, 500);
       }
       if (!this._elements || this._elements.length === 0) {
         this.cy.fit();
