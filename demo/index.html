@@ -9,7 +9,7 @@
     </style>
   </head>
   <body>
-    <div id="demo"></div>
+    <div id="demo" style="display: flex; width: 900px; height: 900px"></div>
 
     <script type="module">
       import { html, render } from 'lit';
@@ -20,8 +20,8 @@
       render(
         html`
           <cytoscape-dagre
-            style="width: 100px; height: 100px;"
-            .nodes=${[
+            style="flex: 1;"
+            .elements=${[
               {
                 // node a
                 data: { id: 'a' },
@@ -30,8 +30,6 @@
                 // node b
                 data: { id: 'b' },
               },
-            ]}
-            .edges=${[
               {
                 // edge ab
                 data: { id: 'ab', source: 'a', target: 'b' },

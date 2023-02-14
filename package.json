@@ -3,7 +3,7 @@
   "description": "Wrapper of cytoscape as a custom element following the @open-wc/scoped-elements pattern",
   "license": "MIT",
   "author": "guillem.cordoba@gmail.com",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "exports": {
@@ -57,19 +57,12 @@
   "customElements": "custom-elements.json",
   "eslintConfig": {
     "parser": "@typescript-eslint/parser",
-    "extends": [
-      "@open-wc",
-      "prettier"
-    ],
-    "plugins": [
-      "@typescript-eslint"
-    ],
+    "extends": ["@open-wc", "prettier"],
+    "plugins": ["@typescript-eslint"],
     "rules": {
       "consistent-return": "off",
       "no-unused-vars": "off",
-      "@typescript-eslint/no-unused-vars": [
-        "error"
-      ],
+      "@typescript-eslint/no-unused-vars": ["error"],
       "class-methods-use-this": "off",
       "import/no-unresolved": "off",
       "import/extensions": "off"
@@ -85,9 +78,6 @@
     }
   },
   "lint-staged": {
-    "*.ts": [
-      "eslint --fix",
-      "prettier --write"
-    ]
+    "*.ts": ["eslint --fix", "prettier --write"]
   }
 }

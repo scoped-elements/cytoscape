@@ -57,6 +57,15 @@ export abstract class CytoscapeBase extends LitElement {
   _graphElement!: HTMLElement;
 
   firstUpdated() {
+    const interval = setInterval(() => {
+      if (window.getComputedStyle(this._graphElement).length > 0) {
+        clearInterval(interval);
+        this.setupCytoscape();
+      }
+    }, 10);
+  }
+
+  setupCytoscape() {
     const options = merge(
       {
         container: this._graphElement,
@@ -114,21 +123,21 @@ export abstract class CytoscapeBase extends LitElement {
         }
       }
     });
-    /* 
-    this.cy.ready(() => {
-      setTimeout(() => {
-        this.cy.fit();
-        this.cy.center();
-        this.cy.resize();
-        this.cy.layout(this.layout()).run();
-      }, 10);
-    }); */
+
+    // this.cy.ready(() => {
+    //   setTimeout(() => {
+    //     this.cy.fit();
+    //     this.cy.center();
+    //     this.cy.resize();
+    //     this.cy.layout(this.layout()).run();
+    //   }, 10);
+    // });
   }
 
   updated(changedValues: PropertyValues) {
     super.updated(changedValues);
 
-    if (changedValues.has('selectedNodesIds')) {
+    if (this.cy && changedValues.has('selectedNodesIds')) {
       this.cy.filter('node').removeClass('selected');
 
       const nodeElements = this.cy.nodes();
