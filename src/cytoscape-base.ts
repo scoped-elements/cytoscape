@@ -7,7 +7,7 @@ import cytoscape, {
   LayoutOptions,
   NodeDefinition,
 } from 'cytoscape';
-import merge from 'lodash-es/merge';
+import merge from 'lodash-es/merge.js';
 
 export abstract class CytoscapeBase extends LitElement {
   @property()

@@ -1,5 +1,5 @@
 import { property } from 'lit/decorators.js';
-import { CytoscapeBase } from './cytoscape-base';
+import { CytoscapeBase } from './cytoscape-base.js';
 
 export class CytoscapeCircle extends CytoscapeBase {
   @property()
