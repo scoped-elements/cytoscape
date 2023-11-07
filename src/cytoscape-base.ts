@@ -25,6 +25,14 @@ export abstract class CytoscapeBase extends LitElement {
         el => collection.getElementById(el.data.id as string).length === 0
       );
 
+      const toEdit = allElements.filter(
+        el => collection.getElementById(el.data.id as string).length > 0
+      );
+
+      for (const editNode of toEdit) {
+        (this.cy.getElementById(editNode.data.id!) as any).json(editNode);
+      }
+
       this.cy.remove(toRemove);
       this.cy.add(toAdd);
 

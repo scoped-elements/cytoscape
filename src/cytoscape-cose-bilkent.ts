@@ -1,4 +1,4 @@
-import { property } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import cytoscape from 'cytoscape';
 
 // @ts-ignore
@@ -7,6 +7,7 @@ import { CytoscapeBase } from './cytoscape-base.js';
 
 cytoscape.use(coseBilkent);
 
+@customElement('cytoscape-cose-bilkent')
 export class CytoscapeCoseBilkent extends CytoscapeBase {
   @property()
   coseBilkentOptions = {};

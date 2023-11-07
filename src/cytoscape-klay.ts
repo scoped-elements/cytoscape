@@ -1,21 +1,20 @@
 import { customElement, property } from 'lit/decorators.js';
 import cytoscape from 'cytoscape';
-
 // @ts-ignore
-import cola from 'cytoscape-cola';
+import klay from 'cytoscape-klay';
 import { CytoscapeBase } from './cytoscape-base.js';
 
-cytoscape.use(cola);
+cytoscape.use(klay);
 
-@customElement('cytoscape-cola')
-export class CytoscapeCola extends CytoscapeBase {
+@customElement('cytoscape-klay')
+export class CytoscapeKlay extends CytoscapeBase {
   @property()
-  colaOptions = {};
+  klayOptions = {};
 
   layout() {
     return {
-      name: 'cola',
-      ...this.colaOptions,
+      name: 'klay',
+      ...this.klayOptions,
     };
   }
 }
