@@ -90,7 +90,7 @@ export abstract class CytoscapeBase extends LitElement {
         this.cy.resize();
 
         this.requestUpdate();
-      });
+      }, 200);
     }).observe(this);
 
     window.addEventListener('scroll', () => {
@@ -160,7 +160,7 @@ export abstract class CytoscapeBase extends LitElement {
   }
 
   render() {
-    return html`<div id="graph" style="flex: 1;"></div>`;
+    return html`<div id="graph"></div>`;
   }
 
   abstract layout(): LayoutOptions;
@@ -168,7 +168,14 @@ export abstract class CytoscapeBase extends LitElement {
   static styles = [
     css`
       :host {
-        display: flex;
+        position: relative;
+      }
+      #graph {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
       }
     `,
   ];

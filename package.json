@@ -3,7 +3,7 @@
   "description": "Wrapper of cytoscape as a custom element following the @open-wc/scoped-elements pattern",
   "license": "MIT",
   "author": "guillem.cordoba@gmail.com",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "type": "module",
