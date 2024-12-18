@@ -176,6 +176,7 @@ export abstract class CytoscapeBase extends LitElement {
         right: 0;
         left: 0;
         bottom: 0;
+        text-align: justify;
       }
     `,
   ];
