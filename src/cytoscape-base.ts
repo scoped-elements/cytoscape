@@ -14,9 +14,19 @@ export abstract class CytoscapeBase extends LitElement {
   options: CytoscapeOptions = {};
 
   @property()
+  ghostNodes: Array<NodeDefinition> = [];
+
+  @property()
   set elements(allElements: Array<NodeDefinition | EdgeDefinition>) {
     if (this.cy) {
-      const collection = this.cy.elements();
+      const collection = this.cy
+        .elements()
+        .filter(
+          el =>
+            !this.ghostNodes.find(
+              ghostNode => el.data('id') !== ghostNode.data.id
+            )
+        );
 
       const toRemove = collection.filter(
         ele => !allElements.find(newEl => newEl.data.id === ele.data().id)
@@ -37,12 +47,20 @@ export abstract class CytoscapeBase extends LitElement {
       this.cy.add(toAdd);
 
       if (toAdd.length > 0 || toRemove.length > 0) {
-        this.cy.layout(this.layout()).run();
-        setTimeout(() => {
-          this.cy.fit();
-          this.cy.resize();
-          this.requestUpdate();
-        }, 500);
+        const nonGhostNodes = this.cy
+          .elements()
+          .filter(
+            el =>
+              !this.ghostNodes.find(
+                ghostNode => el.data('id') !== ghostNode.data.id
+              )
+          );
+        nonGhostNodes.layout(this.layout()).run();
+        // setTimeout(() => {
+        //   this.cy.fit();
+        //   this.cy.resize();
+        //   this.requestUpdate();
+        // }, 500);
       }
       if (!this._elements || this._elements.length === 0) {
         this.cy.fit();
