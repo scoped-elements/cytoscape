@@ -24,7 +24,7 @@ export abstract class CytoscapeBase extends LitElement {
         .filter(
           el =>
             !this.ghostNodes.find(
-              ghostNode => el.data('id') !== ghostNode.data.id
+              ghostNode => el.data('id') === ghostNode.data.id
             )
         );
 
@@ -52,7 +52,7 @@ export abstract class CytoscapeBase extends LitElement {
           .filter(
             el =>
               !this.ghostNodes.find(
-                ghostNode => el.data('id') !== ghostNode.data.id
+                ghostNode => el.data('id') === ghostNode.data.id
               )
           );
         nonGhostNodes.layout(this.layout()).run();
