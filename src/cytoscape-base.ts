@@ -14,29 +14,22 @@ export abstract class CytoscapeBase extends LitElement {
   options: CytoscapeOptions = {};
 
   @property()
-  ghostNodes: Array<NodeDefinition> = [];
-
-  @property()
   set elements(allElements: Array<NodeDefinition | EdgeDefinition>) {
     if (this.cy) {
-      const collection = this.cy
+      const nonGhostCollection = this.cy
         .elements()
-        .filter(
-          el =>
-            !this.ghostNodes.find(
-              ghostNode => el.data('id') === ghostNode.data.id
-            )
-        );
+        .filter(el => el.data('ghost') !== true);
 
-      const toRemove = collection.filter(
+      const toRemove = nonGhostCollection.filter(
         ele => !allElements.find(newEl => newEl.data.id === ele.data().id)
       );
       const toAdd = allElements.filter(
-        el => collection.getElementById(el.data.id as string).length === 0
+        el =>
+          nonGhostCollection.getElementById(el.data.id as string).length === 0
       );
 
       const toEdit = allElements.filter(
-        el => collection.getElementById(el.data.id as string).length > 0
+        el => nonGhostCollection.getElementById(el.data.id as string).length > 0
       );
 
       for (const editNode of toEdit) {
@@ -49,12 +42,7 @@ export abstract class CytoscapeBase extends LitElement {
       if (toAdd.length > 0 || toRemove.length > 0) {
         const nonGhostNodes = this.cy
           .elements()
-          .filter(
-            el =>
-              !this.ghostNodes.find(
-                ghostNode => el.data('id') === ghostNode.data.id
-              )
-          );
+          .filter(el => el.data('ghost') !== true);
         nonGhostNodes.layout(this.layout()).run();
         // setTimeout(() => {
         //   this.cy.fit();
