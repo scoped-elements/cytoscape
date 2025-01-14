@@ -114,6 +114,16 @@ export abstract class CytoscapeBase extends LitElement {
       );
     });
 
+    this.cy.on('tap', 'edge', event => {
+      this.dispatchEvent(
+        new CustomEvent('edge-selected', {
+          bubbles: true,
+          composed: true,
+          detail: event.target,
+        })
+      );
+    });
+
     let rendered = false;
     this.cy.on('render', () => {
       if (this.cy.width() !== 0) {

@@ -21,6 +21,8 @@
         html`
           <cytoscape-klay
             style="width: 400px; height: 400px;"
+            @edge-selected=${console.log}
+            @node-selected=${console.log}
             .elements=${[
               {
                 // node a
