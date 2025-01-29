@@ -42,7 +42,12 @@ export abstract class CytoscapeBase extends LitElement {
       if (toAdd.length > 0 || toRemove.length > 0) {
         const nonGhostNodes = this.cy
           .elements()
-          .filter(el => el.data('ghost') !== true);
+          .filter(el => el.data('ghost') !== true)
+          .sort(
+            (el1, el2) =>
+              allElements.findIndex(el => el.data.id === el1.id()) -
+              allElements.findIndex(el => el.data.id === el2.id())
+          );
         nonGhostNodes.layout(this.layout()).run();
         // setTimeout(() => {
         //   this.cy.fit();

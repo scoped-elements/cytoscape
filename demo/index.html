@@ -17,20 +17,41 @@
       import { html, render } from 'lit';
       import '../dist';
 
+      setTimeout(() => {
+        const circle = document.querySelector('cytoscape-circle');
+        circle.elements = [
+          { data: { id: 'a', label: 'a' } },
+          { data: { id: 'd', label: 'd' } },
+          { data: { id: 'b', label: 'b' } },
+          { data: { id: 'c', label: 'c' } },
+        ];
+      }, 2000);
+
       render(
         html`
-          <cytoscape-klay
+          <cytoscape-circle
             style="width: 400px; height: 400px;"
             @edge-selected=${console.log}
             @node-selected=${console.log}
+            .options=${{
+              style: `
+                node {
+                  label: data(label);
+                }
+              `,
+            }}
             .elements=${[
               {
                 // node a
-                data: { id: 'a' },
+                data: { id: 'a', label: 'a' },
               },
               {
                 // node b
-                data: { id: 'b' },
+                data: { id: 'b', label: 'b' },
+              },
+              {
+                // node b
+                data: { id: 'c', label: 'c' },
               },
               {
                 // edge ab
@@ -38,7 +59,7 @@
               },
             ]}
           >
-          </cytoscape-klay>
+          </cytoscape-circle>
         `,
         document.querySelector('#demo')
       );
